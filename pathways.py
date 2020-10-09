@@ -1,30 +1,29 @@
 
+from Node import Node
 import copy
 
-rows = columns = 5
+rows = 5
+columns = 5
 
 def main():
     
-    board = initBoard();
-    drawBoard(board)
+    board = Node(rows=rows, cols=columns)
+    board.resetGrid()
+    board.insertMove(2,0,'H')
+    board.insertMove(2,2,'H')
+    board.insertMove(3,3,'H')
+    board.insertMove(4,4,'H')
+    board.draw()
+    board.checkForAWin(2,2)
 
 
-# Change to ResetGrid?
-def initBoard():
-
-    board = []
-
-    for i in range(rows): 
-        board.append([])
-        for j in range(columns):
-            board[i].append('o')
-
-    return board
+def insertMove(r,c,b,location):
+    b[r][c] = location
 
 
 def getWhoMovesFirst():
     
-    return = input("Who moves first? (h/m)")
+    return input("Who moves first? (h/m)")
 
 
 def getHumanPlayerMove():
@@ -35,25 +34,12 @@ def generateComputerPlayerMove():
     pass
 
 
-def checkForAWin(board):
-    pass
-
-
 def minimax(board):
     b = copy.deepcopy(board)
 
 
-def alpha-beta(board):
+def alpha_beta(board):
     b = copy.deepcopy(board)
-
-
-def drawBoard(b):
-
-    for i in range(rows):
-        for j in range(columns):
-            print(f'{b[i][j]}', end=' ')
-        print()        
-    print()
 
 
 if __name__ == "__main__":
