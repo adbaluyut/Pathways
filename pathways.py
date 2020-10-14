@@ -14,7 +14,7 @@ def main():
     board.insertMove(3,3,'H')
     board.insertMove(4,4,'H')
     board.draw()
-    board.checkForAWin(2,2)
+    board.checkForAWin(2,2,'H')
 
 
 def insertMove(r,c,b,location):

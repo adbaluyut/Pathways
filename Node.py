@@ -62,32 +62,7 @@ class Node:
         
         return [i for i in neighbors if i]
 
-    
-    def checkPaths(self):
-        pass
-
-
-    def pathUp(self):
-        pass
-
 
     def checkForAWin(self,r,c,playerType):
-        leftValid = False
-        rightValid = False
-        
-        # move left
-        if c > 0:
-            if self.state[r][c-1] == playerType:
-                pass
-
-        # move up
-        if r > 0:
-            if self.state[r-1][c] == playerType:
-                pass
-            
-        # move down
-
-        # move right
-
-        return leftValid and rightValid
+        pass
 
