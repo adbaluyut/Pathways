@@ -1,10 +1,11 @@
 
+import copy
+
 class Node:
 
-    def __init__(self, state=None, rows=None, cols=None, parent=None):
+    def __init__(self, state=None, N=None, parent=None):
         self.state = state
-        self.rows = rows
-        self.cols = cols
+        self.N = N
         self.parent = parent
 
 
@@ -12,9 +13,9 @@ class Node:
 
         self.state = []
 
-        for i in range(self.rows): 
+        for i in range(self.N): 
             self.state.append([])
-            for j in range(self.cols):
+            for j in range(self.N):
                 
                 if (i % 2) == 0 and (j % 2) == 1:
                     self.state[i].append('H')
@@ -25,8 +26,8 @@ class Node:
 
     
     def draw(self):
-        for i in range(self.rows):
-            for j in range(self.cols):
+        for i in range(self.N - 1, -1, -1):
+            for j in range(self.N):
                 print(f'{self.state[i][j]}', end=' ')
             print()        
         print()
@@ -63,6 +64,35 @@ class Node:
         return [i for i in neighbors if i]
 
 
+    def generateStates(self):
+        stateList = []
+
+        for i in range(self.N):
+            for j in range(self.N):
+                if self.state[i][j] == ' ':
+                    self.state[i][j] ='M'
+                    self.state[i][j] = ' '
+                    # New Node will have a copy of board.state
+                    stateOption = Node(N=self.N, state=copy.deepcopy(self.state), parent=self)
+                    # New Node.state[i][j] = 'M'
+                    stateOption.state[i][j] = 'M'
+                    # store the state
+                    stateList.append(stateOption)
+        
+        for state in stateList:
+            state.draw()
+            
+        print(len(stateList))
+                    
+
     def checkForAWin(self,r,c,playerType):
+
+        for i in range(self.N):
+            for j in range(self.N):
+                if self.state[i][j] == playerType:
+                    startingState = self.state[i][j]
+                    break
+
+        
         pass
 

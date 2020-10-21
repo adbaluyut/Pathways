@@ -2,18 +2,20 @@
 from Node import Node
 import copy
 
-rows = columns = 5
+N = 5
 
 def main():
     
-    board = Node(rows=rows, cols=columns)
+    board = Node(N=N)
     board.resetGrid()
-    # board.insertMove(2,0,'H') 
-    # board.insertMove(2,2,'H')
-    # board.insertMove(3,3,'H')
-    # board.insertMove(4,4,'H')
-    board.draw()
-    getHumanPlayerMove(board)
+    board.insertMove(2,0,'H') 
+    board.insertMove(2,2,'H')
+    board.insertMove(3,3,'H')
+    board.insertMove(4,4,'H')
+    # board.draw()
+    # getHumanPlayerMove(board)
+    # board.draw()
+    # board.generateStates()
     board.draw()
     board.checkForAWin(2,2,'H')
 
@@ -29,7 +31,7 @@ def getHumanPlayerMove(board):
         x = int(input('\nEnter the x coordinate of your desired move:'))
         y = int(input('\nEnter the y coordinate of your desired move:'))
 
-        if ((x < rows and y < columns) and board.state[x][y] == ' '):
+        if ((x < N and y < N) and board.state[x][y] == ' '):
             board.insertMove(x,y,'H')
             invalid_move = False
         else: 
@@ -37,7 +39,6 @@ def getHumanPlayerMove(board):
 
 def generateComputerPlayerMove():
     pass
-
 
 def minimax(board):
     b = copy.deepcopy(board)
