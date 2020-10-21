@@ -8,7 +8,7 @@ def main():
     
     board = Node(rows=rows, cols=columns)
     board.resetGrid()
-    # board.insertMove(2,0,'H')
+    # board.insertMove(2,0,'H') 
     # board.insertMove(2,2,'H')
     # board.insertMove(3,3,'H')
     # board.insertMove(4,4,'H')
