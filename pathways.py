@@ -4,24 +4,28 @@ import copy
 
 N = 5
 
+
 def main():
-    
+
     board = Node(N=N)
     board.resetGrid()
-    board.insertMove(2,0,'H') 
-    board.insertMove(2,2,'H')
-    board.insertMove(3,3,'H')
-    board.insertMove(4,4,'H')
+    board.insertMove(2, 0, 'H')
+    board.insertMove(2, 2, 'H')
+    board.insertMove(3, 3, 'H')
+    board.insertMove(4, 4, 'H')
     # board.draw()
     # getHumanPlayerMove(board)
     # board.draw()
     # board.generateStates()
     board.draw()
-    board.checkForAWin(2,2,'H')
+    if (board.checkForAWin(board.state, (2,0), (4,4), 'H')):
+        print('Win!')
+    else:
+        print('nah brah')
 
 
 def getWhoMovesFirst():
-    
+
     return input("Who moves first? (h/m)")
 
 
@@ -32,13 +36,15 @@ def getHumanPlayerMove(board):
         y = int(input('\nEnter the y coordinate of your desired move:'))
 
         if ((x < N and y < N) and board.state[x][y] == ' '):
-            board.insertMove(x,y,'H')
+            board.insertMove(x, y, 'H')
             invalid_move = False
-        else: 
+        else:
             print('\nInvalid move, please try new coordinates.')
+
 
 def generateComputerPlayerMove():
     pass
+
 
 def minimax(board):
     b = copy.deepcopy(board)
