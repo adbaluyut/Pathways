@@ -25,7 +25,7 @@ def playGame(board):
     depth = 3
     currentPlayer, maximizingPlayer = getWhoMovesFirst()
 
-    while not board.checkForAWin(currentPlayer):
+    while True:
 
         if board.isFull():
             print("It's a draw!")
@@ -45,15 +45,20 @@ def playGame(board):
             board.draw()
             print("________________________")
             # this returns the state to the next move we can make
-            while board.parent.parent:
-                # print(board.parent)
-                board = board.parent
+            if board.parent is not None:
+                while board.parent.parent:
+                    # print(board.parent)
+                    board = board.parent
             board.parent = None
 
             currentPlayer = 'H'
     
         board.draw()
         # break
+
+        if board.checkForAWin('H' if currentPlayer == 'M' else 'M'):
+            print(f"{'Human' if currentPlayer == 'M' else 'Computer'} Player wins!")                        
+            break
 
 
 # if computer moves first computer is a maximizing player
@@ -97,7 +102,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, playerType):
     # for s in children:
     #     s.draw()
 
-    if (depth == 0 or curState.checkForAWin('M')):
+    if (depth == 0 or curState.checkForAWin('M') or len(children) == 0):
         return curState, staticEvaluation(curState)
 
     if maximizingPlayer:
@@ -120,7 +125,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, playerType):
         minEvaluation = 1000
         for child in children:
             newState, evaluation = minimax(child, depth - 1, alpha, beta, True, opponent)
-            if evaluation > minEvaluation:
+            if evaluation < minEvaluation:
                 state = newState
             minEvaluation = min(minEvaluation, evaluation)
             beta = min(beta, evaluation)

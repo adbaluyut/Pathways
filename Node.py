@@ -109,7 +109,7 @@ class Node:
                     #search
                     if self.checkPath(s, e, playerType):
 
-                        print(f"{'Human' if playerType == 'H' else 'Computer'} Player  wins!")
+                        # print(f"{'Human' if playerType == 'H' else 'Computer'} Player wins!")
                         return True
                     # print(f"{s},{e}")
 
