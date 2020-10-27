@@ -6,11 +6,15 @@ import copy
 class Node:
 
     # Initiates an N x N grid
-    def __init__(self, state=None, N=None, parent=None):
+    def __init__(self, state=None, N=None, parent=None, heuristic=None):
 
         self.state = state
         self.N = N
         self.parent = parent
+        # self.alpha = -1000000
+        # self.beta = 1000000
+        self.heuristic = heuristic
+        self.value = None
 
     def resetGrid(self):
 
@@ -67,10 +71,11 @@ class Node:
                     # store the state
                     stateList.append(stateOption)
 
-        for state in stateList:
-            state.draw()
+        # for state in stateList:
+        #     state.draw()
 
-        print(len(stateList))
+        # print(len(stateList))
+        return stateList
 
     def checkForAWin(self, playerType):
 
