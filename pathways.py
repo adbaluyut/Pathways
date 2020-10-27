@@ -35,11 +35,12 @@ def playGame(board):
         else:
 
             print("Computer making it's move")
-            board = minimax(board, depth, -1000, +1000, maximizingPlayer)[0]
+            board = minimax(board, depth, -1000, +1000, maximizingPlayer, 'M')[0]
 
             print("printing the returned board")
             board.draw()
             print("________________________")
+            # this returns the state to the next move we can make
             while board.parent.parent:
                 # print(board.parent)
                 board = board.parent
@@ -48,7 +49,7 @@ def playGame(board):
             currentPlayer = 'H'
     
         board.draw()
-        # break
+        break
 
 
 def getWhoMovesFirst():
@@ -81,10 +82,12 @@ def generateComputerPlayerMove():
 
 
 # right now minimax returns a state in the highest position every time
-def minimax(board, depth, alpha, beta, maximizingPlayer):
+def minimax(board, depth, alpha, beta, maximizingPlayer, playerType):
+
     curState = copy.deepcopy(board)
     state = None
-    children = curState.generateStates()
+    children = curState.generateStates(playerType)
+    opponent = 'M' if (playerType == 'H') else 'H'
 
     # for s in children:
     #     s.draw()
@@ -97,7 +100,9 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         
         # curState is the generated States
         for child in children:
-            state, evaluation = minimax(child, depth -1, alpha, beta, False)
+            newState, evaluation = minimax(child, depth -1, alpha, beta, False, opponent)
+            if evaluation > maxEvaluation:
+                state = newState
             maxEvaluation = max(maxEvaluation, evaluation)
             alpha = max(alpha, evaluation)
             if beta <= alpha:
@@ -109,7 +114,9 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
     else:
         minEvaluation = 1000
         for child in children:
-            state, evaluation = minimax(child, depth - 1, alpha, beta, True)
+            newState, evaluation = minimax(child, depth - 1, alpha, beta, True, opponent)
+            if evaluation > minEvaluation:
+                state = newState
             minEvaluation = min(minEvaluation, evaluation)
             beta = min(beta, evaluation)
             if beta <= alpha:

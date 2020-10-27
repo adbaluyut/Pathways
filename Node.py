@@ -55,19 +55,19 @@ class Node:
 
         return [i for i in neighbors if i]
 
-    def generateStates(self):
+    def generateStates(self, playerType):
 
         stateList = []
 
         for i in range(self.N):
             for j in range(self.N):
                 if self.state[i][j] == ' ':
-                    self.state[i][j] = 'M'
+                    self.state[i][j] = playerType
                     self.state[i][j] = ' '
                     # New Node will have a copy of board.state
                     stateOption = Node(N=self.N, state=copy.deepcopy(self.state), parent=self)
                     # New Node.state[i][j] = 'M'
-                    stateOption.state[i][j] = 'M'
+                    stateOption.state[i][j] = playerType
                     # store the state
                     stateList.append(stateOption)
 
