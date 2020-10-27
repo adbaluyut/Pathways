@@ -27,6 +27,10 @@ def playGame(board):
 
     while not board.checkForAWin(currentPlayer):
 
+        if board.isFull():
+            print("It's a draw!")
+            break
+
         if currentPlayer == 'H':
 
             getHumanPlayerMove(board)
@@ -49,9 +53,10 @@ def playGame(board):
             currentPlayer = 'H'
     
         board.draw()
-        break
+        # break
 
 
+# if computer moves first computer is a maximizing player
 def getWhoMovesFirst():
 
     maximizing = True

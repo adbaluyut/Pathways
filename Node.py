@@ -44,6 +44,16 @@ class Node:
 
         self.state[r][c] = playerType
 
+    def isFull(self):
+
+        full = True
+
+        for i in range(self.N):
+            if ' ' in self.state[i]:
+                full = False
+
+        return full
+
     def checkMoves(self):
 
         index = self.findEmpty()
@@ -98,6 +108,8 @@ class Node:
                     e = end.popleft()
                     #search
                     if self.checkPath(s, e, playerType):
+
+                        print(f"{'Human' if playerType == 'H' else 'Computer'} Player  wins!")
                         return True
                     # print(f"{s},{e}")
 
