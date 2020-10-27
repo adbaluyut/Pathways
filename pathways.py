@@ -75,6 +75,7 @@ def getHumanPlayerMove(board):
         else:
             print('\nInvalid move, please try new coordinates.')
 
+            
 def generateComputerPlayerMove():
     pass
 
@@ -104,7 +105,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         # print("maximizing")
         # state.draw()
         return state, maxEvaluation
-
+      
     else:
         minEvaluation = 1000
         for child in children:
@@ -124,6 +125,7 @@ def staticEvaluation(curState): #curState is a node and this assigns a value to 
     # print(f"heuristic value = {curState.heuristic}")
     return curState.heuristic
 
+  
 def alpha_beta(board):
     b = copy.deepcopy(board)
 
