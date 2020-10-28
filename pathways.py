@@ -39,11 +39,11 @@ def playGame(board):
         else:
 
             print("Computer making it's move")
-            board = minimax(board, depth, -1000, +1000, maximizingPlayer, 'M')[0]
+            board = generateComputerPlayerMove(board, depth, -1000, +1000, maximizingPlayer, 'M')[0]
 
-            print("printing the returned board")
-            board.draw()
-            print("________________________")
+            # print("printing the returned board")
+            # board.draw()
+            # print("________________________")
             # this returns the state to the next move we can make
             if board.parent is not None:
                 while board.parent.parent:
@@ -56,7 +56,7 @@ def playGame(board):
         board.draw()
         # break
 
-        if board.checkForAWin('H' if currentPlayer == 'M' else 'M'):
+        if board.checkForAWin('H' if currentPlayer == 'M' else 'M')[0]:
             print(f"{'Human' if currentPlayer == 'M' else 'Computer'} Player wins!")                        
             break
 
@@ -77,8 +77,8 @@ def getHumanPlayerMove(board):
 
     invalid_move = True
     while (invalid_move):
-        x = int(input('\nEnter the x coordinate of your desired move:'))
-        y = int(input('\nEnter the y coordinate of your desired move:'))
+        x = int(input('\nEnter the row of your desired move:'))
+        y = int(input('\nEnter the column of your desired move:'))
 
         if ((x < N and y < N) and board.state[x][y] == ' '):
             board.insertMove(x, y, 'H')
@@ -86,13 +86,8 @@ def getHumanPlayerMove(board):
         else:
             print('\nInvalid move, please try new coordinates.')
 
-            
-def generateComputerPlayerMove():
-    pass
 
-
-# right now minimax returns a state in the highest position every time
-def minimax(board, depth, alpha, beta, maximizingPlayer, playerType):
+def generateComputerPlayerMove(board, depth, alpha, beta, maximizingPlayer, playerType):
 
     curState = copy.deepcopy(board)
     state = None
@@ -102,15 +97,15 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, playerType):
     # for s in children:
     #     s.draw()
 
-    if (depth == 0 or curState.checkForAWin('M') or len(children) == 0):
-        return curState, staticEvaluation(curState)
+    if (depth == 0 or curState.checkForAWin('M')[0] or len(children) == 0):
+        return curState, staticEvaluation(curState, playerType)
 
     if maximizingPlayer:
         maxEvaluation = -1000
         
         # curState is the generated States
         for child in children:
-            newState, evaluation = minimax(child, depth -1, alpha, beta, False, opponent)
+            newState, evaluation = generateComputerPlayerMove(child, depth -1, alpha, beta, False, opponent)
             if evaluation > maxEvaluation:
                 state = newState
             maxEvaluation = max(maxEvaluation, evaluation)
@@ -124,7 +119,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, playerType):
     else:
         minEvaluation = 1000
         for child in children:
-            newState, evaluation = minimax(child, depth - 1, alpha, beta, True, opponent)
+            newState, evaluation = generateComputerPlayerMove(child, depth - 1, alpha, beta, True, opponent)
             if evaluation < minEvaluation:
                 state = newState
             minEvaluation = min(minEvaluation, evaluation)
@@ -136,15 +131,105 @@ def minimax(board, depth, alpha, beta, maximizingPlayer, playerType):
         return state, minEvaluation
     
 
-def staticEvaluation(curState): #curState is a node and this assigns a value to it
-    random.seed(datetime.now())
-    curState.heuristic = random.randint(1, 50)
-    # print(f"heuristic value = {curState.heuristic}")
-    return curState.heuristic
+def staticEvaluation(curState, playerType): #curState is a node and this assigns a value to it
+    value = 0
+    isWin = curState.checkForAWin(playerType)
+    opponentWin = curState.checkForAWin('H' if playerType == 'M' else 'M')
 
-  
-def alpha_beta(board):
-    b = copy.deepcopy(board)
+    #Find all possible winning paths from the current state.
+
+    #mini_lists = [x,y,0]
+    ex_1 = [1,4,0]
+    ex_2 = [3,7,0]
+    ex_3 = [2,1,0]
+    ex_4 = [3,8,0]
+
+    #possiblepath
+    path1 = [ex_1,ex_2,ex_3,ex_4]
+
+    #mini_lists = [x,y,0]
+    ex_1 = [1,4,0]
+    ex_2 = [8,1,0]
+    ex_3 = [2,1,0]
+    ex_4 = [6,6,0]
+
+    #possiblepath
+    path2 = [ex_1,ex_2,ex_3,ex_4]
+
+    #mini_lists = [x,y,0]
+    ex_1 = [1,4,0]
+    ex_2 = [7,7,0]
+    ex_3 = [8,2,0]
+    ex_4 = [2,6,0]
+
+    #possiblepath
+    path3 = [ex_1,ex_2,ex_3,ex_4]
+
+    possiblePaths =[path1, path2, path3]
+
+    #---------> make the vertices have a 3rd blank index
+
+
+    #Log all vertices that are in a winning path
+
+    verticesInPaths = []
+
+    for path in possiblePaths:
+        for vertex in path:
+            if curState.state[vertex[0]][vertex[1]] != 'M':
+                verticesInPaths.append(vertex)
+
+    #Count the number of winning paths that go through each vertex.
+
+    for vertex in verticesInPaths:
+        vertex[2] = verticesInPaths.count(vertex)
+
+    #Sort the selected vertices list based on how many paths they're in.
+
+    sorted(verticesInPaths, key = lambda x: x[2])
+    winningVertex = verticesInPaths[0]
+
+    #(Can range from once up to the number of possible winning paths found.)
+
+    #All vertices on the grid that are in the above group, means that they are not 
+    #in the path of a winning option, and are given a low value. (Or none?)
+    #Maybe doesn't even matter since the other ones will be chosen anyways.
+
+    #Select the vertex with the highest number.
+    print('Based on this method alone, the next best move is the vertex ({:d},{:d}) as it is a vertex in {:d} possible winning paths.'.format(winningVertex[0], winningVertex[1], winningVertex[2]))
+
+    
+    
+    
+    
+    
+    
+    return value
+    
+    #-------------------
+    
+    # if this is a winning state give it a high value
+    if isWin[0]:
+        value += 100
+    # if this is a losing state give it a low value
+    if opponentWin[0]:
+        value -= 100
+    
+    
+    # depending on path length add a value
+
+    # depending on opponents path length subtract a value
+
+    # if we place it in a column with no playerType give add to value else + 0?
+
+    # random.seed(datetime.now())
+    # curState.heuristic = random.randint(1, 50)
+    # # print(f"heuristic value = {curState.heuristic}")
+    # return curState.heuristic
+
+    # if all up, down, left, right is other player or out of bounds
+
+    return value
 
 
 if __name__ == "__main__":
