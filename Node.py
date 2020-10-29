@@ -44,6 +44,16 @@ class Node:
 
         self.state[r][c] = playerType
 
+    def isFull(self):
+
+        full = True
+
+        for i in range(self.N):
+            if ' ' in self.state[i]:
+                full = False
+
+        return full
+
     def checkMoves(self):
 
         index = self.findEmpty()
@@ -55,19 +65,19 @@ class Node:
 
         return [i for i in neighbors if i]
 
-    def generateStates(self):
+    def generateStates(self, playerType):
 
         stateList = []
 
         for i in range(self.N):
             for j in range(self.N):
                 if self.state[i][j] == ' ':
-                    self.state[i][j] = 'M'
+                    self.state[i][j] = playerType
                     self.state[i][j] = ' '
                     # New Node will have a copy of board.state
                     stateOption = Node(N=self.N, state=copy.deepcopy(self.state), parent=self)
                     # New Node.state[i][j] = 'M'
-                    stateOption.state[i][j] = 'M'
+                    stateOption.state[i][j] = playerType
                     # store the state
                     stateList.append(stateOption)
 
@@ -79,6 +89,91 @@ class Node:
 
     def checkForAWin(self, playerType):
 
+        pathLength = 0
+
+        start = deque()
+        end = deque()
+
+        for i in range(self.N):
+            if self.state[i][0] == playerType:
+                start.append((i, 0))
+            if self.state[i][self.N - 1] == playerType:
+                end.append((i, self.N - 1))
+        
+        if len(start) != 0 and len(end) != 0:
+            while start:
+
+                pathLength += 1
+
+                s = start.popleft()
+
+                while end:
+
+                    e = end.popleft()
+                    #search
+                    if self.checkPath(s, e, playerType):
+
+                        return (True, pathLength)
+                    # print(f"{s},{e}")
+
+        return (False, pathLength)
+    
+    def checkPossiblePaths(self, playerType):
+
+        arr = copy.deepcopy(self.state)
+    
+        # to find the path from  
+        # top left to bottom right  
+
+        start = deque()
+        end = deque()
+
+        for i in range(self.N):
+            if arr[i][0] == playerType:
+                start.append((i, 0))
+            if arr[i][self.N - 1] == playerType:
+                end.append((i, self.N - 1))
+
+       
+    
+        # Mark reachable (from top left)  
+        # nodes in first row and first column.  
+        for i in range(1, self.N): 
+            if (arr[i][0] != 'H'): 
+                arr[i][0] = arr[i-1][0] 
+    
+        for j in range(1, self.N): 
+            if (arr[0][j] != 'H'): 
+                arr[0][j] = arr[0][j-1] 
+                
+        # Mark reachable nodes in  
+        # remaining matrix.  
+        for i in range(1, self.N):
+            for j in range(1, self.N):
+                if (arr[i][j] != -1):
+                    arr[i][j] = max(self.state[i][j - 1],  
+                                    arr[i - 1][j]) 
+                                    
+        # return yes if right  
+        # bottom index is 1 
+        return (arr[self.N - 1][self.N - 1] == 1) 
+    
+        # Driver Code  
+        
+        # Given array  
+        arr = [[ 0, 0, 0, -1, 0 ],  
+            [-1, 0, 0, -1, -1],  
+            [ 0, 0, 0, -1, 0 ],  
+            [-1, 0, -1, 0, -1],  
+            [ 0, 0, -1, 0, 0 ]]  
+        
+        # path from arr[0][0] to arr[row][col]  
+        if (isPath(arr)): 
+            print("Yes")  
+        else: 
+            print("No") 
+
+    def newPaths(self, source, destination, playerType):
         start = deque()
         end = deque()
 
@@ -97,11 +192,10 @@ class Node:
 
                     e = end.popleft()
                     #search
-                    if self.checkPath(s, e, playerType):
+                    if self.newPaths(s, e, playerType):
+
                         return True
                     # print(f"{s},{e}")
-
-        return False
 
     def checkPath(self, source, destination, playerType):
 
@@ -134,7 +228,7 @@ class Node:
         neighbors.append(self.up(r, c, playerType))
         neighbors.append(self.down(r, c, playerType))
         neighbors.append(self.left(r, c, playerType))
-        neighbors.append(self.right(r, c, playerType))        
+        neighbors.append(self.right(r, c, playerType))   
 
         return [i for i in neighbors if i]
 
@@ -164,6 +258,48 @@ class Node:
         
         if c < self.N - 1 and self.state[r][c + 1] == playerType:
             return (r, c + 1)
+        else:
+            return None
+    #endregion
+
+    def checkMovesPossible(self, r, c, playerType):
+
+        neighbors = []
+        neighbors.append(self.upPossiblePaths(r, c, playerType))
+        neighbors.append(self.downPossiblePaths(r, c, playerType))
+        neighbors.append(self.leftPossiblePaths(r, c, playerType))
+        neighbors.append(self.rightPossiblePaths(r, c, playerType))      
+
+        print(f"neighbors = {neighbors}")  
+
+        return [i for i in neighbors if i]
+
+    # region up, down, left, right
+    def upPossiblePaths(self, r, c, playerType):
+        
+        if r < self.N - 1 and (self.state[r + 1][c] != ('H' if playerType == 'M' else 'M')):
+            return [r + 1, c]
+        else:
+            return None
+    
+    def downPossiblePaths(self, r, c, playerType):
+        
+        if r > 0 and (self.state[r - 1][c] != ('H' if playerType == 'M' else 'M')):
+            return [r - 1, c]
+        else:
+            return None
+
+    def leftPossiblePaths(self, r, c, playerType):
+        
+        if c > 0 and (self.state[r][c - 1] != ('H' if playerType == 'M' else 'M')):
+            return [r, c - 1]
+        else:
+            return None
+
+    def rightPossiblePaths(self, r, c, playerType):
+        
+        if c < self.N - 1 and (self.state[r][c + 1] != ('H' if playerType == 'M' else 'M')):
+            return [r, c + 1]
         else:
             return None
     #endregion
