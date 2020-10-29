@@ -1,8 +1,6 @@
 
 from Node import Node
 import copy
-import random
-from datetime import date, datetime
 
 
 while True:
@@ -20,8 +18,6 @@ def main():
     board.resetGrid()
 
     test = createEvalTable(board.state)
-    # for i in test:
-    #     print(i)
 
     playGame(board)
 
@@ -30,7 +26,13 @@ def playGame(board):
     
     board.draw()
 
-    depth = 3
+    while True:
+        depth = input('\nEnter the look-ahead level:\n')
+        if depth.isdigit():
+            depth = int(depth)
+        if type(depth) is int:
+            break
+   
     currentPlayer, maximizingPlayer = getWhoMovesFirst()
 
     while True:
@@ -53,7 +55,6 @@ def playGame(board):
             
             if board.parent is not None:
                 while board.parent.parent:
-                    # print(board.parent)
                     board = board.parent
             board.parent = None
 
@@ -117,7 +118,6 @@ def generateComputerPlayerMove(board, staticBoard, depth, alpha, beta, maximizin
     if maximizingPlayer:
         maxEvaluation = -100000
         
-        # curState is the generated States
         for child in children:
             newState, evaluation = generateComputerPlayerMove(child, staticBoard, depth -1, alpha, beta, False, opponent)
             if evaluation > maxEvaluation:
@@ -155,7 +155,7 @@ def staticEvaluation(curState, staticBoard, playerType):
     
     # if this is a winning state give it a high value
     if isWin[0]:
-        value += 100
+        value += 500
     # if this is a losing state give it a low value
     if opponentWin[0]:
         value -= 200
