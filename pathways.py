@@ -46,11 +46,6 @@ def playGame(board):
             temp = generateComputerPlayerMove(board, board, depth, -1000, +1000, maximizingPlayer, 'M')[0]
             if temp is not None:
                 board = temp
-
-            # print("printing the returned board")
-            # board.draw()
-            # print("________________________")
-            # this returns the state to the next move we can make
             
             if board.parent is not None:
                 while board.parent.parent:
@@ -61,10 +56,9 @@ def playGame(board):
             currentPlayer = 'H'
     
         board.draw()
-        # break
 
         if board.checkForAWin('H' if currentPlayer == 'M' else 'M')[0]:
-            print(f"{'Human' if currentPlayer == 'M' else 'Computer'} Player wins!")                        
+            print(f"{'Human' if currentPlayer == 'M' else 'Computer'} wins!")                        
             break
 
 
@@ -111,7 +105,7 @@ def generateComputerPlayerMove(board, staticBoard, depth, alpha, beta, maximizin
         return curState, staticEvaluation(curState, staticBoard, playerType)
 
     if maximizingPlayer:
-        maxEvaluation = -1000
+        maxEvaluation = -100000
         
         # curState is the generated States
         for child in children:
@@ -127,7 +121,7 @@ def generateComputerPlayerMove(board, staticBoard, depth, alpha, beta, maximizin
         return state, maxEvaluation
       
     else:
-        minEvaluation = 1000
+        minEvaluation = 100000
         for child in children:
             newState, evaluation = generateComputerPlayerMove(child, staticBoard, depth - 1, alpha, beta, True, opponent)
             if evaluation < minEvaluation:
@@ -166,107 +160,92 @@ def staticEvaluation(curState, staticBoard, playerType): #curState is a node and
         value += 100
     # if this is a losing state give it a low value
     if opponentWin[0]:
-        value -= 100
-    
-    
-    # depending on path length add a value
-
-    # depending on opponents path length subtract a value
-
-    # if we place it in a column with no playerType give add to value else + 0?
-
-    # random.seed(datetime.now())
-    # curState.heuristic = random.randint(1, 50)
-    # # print(f"heuristic value = {curState.heuristic}")
-    # return curState.heuristic
-
-    # if all up, down, left, right is other player or out of bounds
+        value -= 200
 
     return value
+
+def createEvalTable(board):
+    
+    b = copy.deepcopy(board)
+    topoMap = copy.deepcopy(board)
+
+    maxValue = 10000
+    minValue = -10000
+    lt_score = 200
+    gt_score = 200
+
+    for i in range(N):
+        for j in range(N): 
+
+            if j == (N - 1) // 2:
+                topoMap[i][j] = maxValue - 150
+            
+            if i == (N - 1) // 2 and j == (N - 1) // 2:
+                topoMap[i][j] = maxValue
+
+            if  j < (N - 1) // 2:
+                topoMap[i][j] = minValue + lt_score
+                lt_score = lt_score + 200
+
+            if j > (N - 1) // 2:
+                topoMap[i][j] = maxValue - gt_score
+                gt_score = gt_score + 200
+
+            if i == 0:
+                topoMap[i][j] = minValue
+            elif i == N - 1:
+                topoMap[i][j] = minValue
+            if j == 0:
+                topoMap[i][j] = minValue
+            elif j == N - 1:
+                topoMap[i][j] = minValue     
+    
+    # for i in topoMap:
+    #     print(i)
+    
+    for i in range(N):
+        for j in range(N):
+            if board[i][j] == ' ':
+                b[i][j] = topoMap[i][j]
+    # for i in b:
+    #     print(i)
+                
+    return b
 
 # def createEvalTable(board):
     
 #     b = copy.deepcopy(board)
-#     topoMap = copy.deepcopy(board)
+#     maxValue = 1000
+#     minValue = -1000
+#     count = 0
 
-#     maxValue = 10000
-#     minValue = -10000
-#     lt_score = 200
-#     gt_score = 200
-
-#     for i in range(N):
-#         for j in range(N):
-            
-#             if i == 0:
-#                 b[i][j] = minValue
-#             elif i == N - 1:
-#                 b[i][j] = minValue
-#             if j == 0:
-#                 b[i][j] = minValue
-#             elif j == N - 1:
-#                 b[i][j] = minValue      
-
-#             if j == (N - 1) // 2:
-#                 topoMap[i][j] = maxValue - 100
-            
-#             if i == (N - 1) // 2 and j == (N - 1) // 2:
-#                 topoMap[i][j] = maxValue
-
-#             if  j < (N - 1) // 2:
-#                 topoMap[i][j] = minValue + lt_score
-#                 lt_score = lt_score + 200
-
-#             if j > (N - 1) // 2:
-#                 topoMap[i][j] = maxValue - gt_score
-#                 gt_score = gt_score + 200
-    
-#     # for i in topoMap:
-#     #     print(i)
     
 #     for i in range(N):
 #         for j in range(N):
 #             if board[i][j] == ' ':
 
-#                 b[i][j] = topoMap[i][j]
-#     # for i in b:
-#     #     print(i)
+#                 b[i][j] = 500
+
+#                 if i == 0:
+#                     b[i][j] = minValue
+#                 elif i == N - 1:
+#                     b[i][j] = minValue
+#                 if j == 0:
+#                     b[i][j] = minValue
+#                 elif j == N - 1:
+#                     b[i][j] = minValue               
+#                 # if the board is in the middle
+#                 if i == (N - 1) // 2 and j == (N - 1) // 2:
+#                     b[i][j] = maxValue
+
+#                 # if (j < (N - 1) // 2) and (j > 0):
+#                 #     b[i][j] = b[i][j+2] - 100
+#                 # else:
+#                 #     b[i][j] = b[i][j-2] - 100
                 
+                
+
 #     return b
-
-def createEvalTable(board):
-    
-    b = copy.deepcopy(board)
-    maxValue = 1000
-    minValue = -1000
-    count = 0
-
-    
-    for i in range(N):
-        for j in range(N):
-            if board[i][j] == ' ':
-
-                b[i][j] = 500
-
-                if i == 0:
-                    b[i][j] = minValue
-                elif i == N - 1:
-                    b[i][j] = minValue
-                if j == 0:
-                    b[i][j] = minValue
-                elif j == N - 1:
-                    b[i][j] = minValue               
-                # if the board is in the middle
-                if i == (N - 1) // 2 and j == (N - 1) // 2:
-                    b[i][j] = maxValue
-
-                # if (j < (N - 1) // 2) and (j > 0):
-                #     b[i][j] = b[i][j+2] - 100
-                # else:
-                #     b[i][j] = b[i][j-2] - 100
-                
-                
-
-    return b
 
 
 if __name__ == "__main__":
