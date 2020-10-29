@@ -31,6 +31,22 @@ class Node:
                     # self.state[i].append(' ')
                 else:
                     self.state[i].append(' ')
+    
+    def resetGridM(self):
+
+        self.state = []
+
+        for i in range(self.N):
+            self.state.append([])
+            for j in range(self.N):
+
+                if (i % 2) == 0 and (j % 2) == 1:
+                    self.state[i].append('M')
+                elif (i % 2) == 1 and (j % 2) == 0:
+                    self.state[i].append('H')
+                    # self.state[i].append(' ')
+                else:
+                    self.state[i].append(' ')
 
     def draw(self):
 

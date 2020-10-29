@@ -17,14 +17,16 @@ def main():
     board = Node(N=N)
     board.resetGrid()
 
-    test = createEvalTable(board.state)
+    # test = createEvalTable(board.state)
+    # for i in test:
+    #     print(i)
 
     playGame(board)
 
 
 def playGame(board):
     
-    board.draw()
+    # board.draw()
 
     while True:
         depth = input('\nEnter the look-ahead level:\n')
@@ -34,6 +36,12 @@ def playGame(board):
             break
    
     currentPlayer, maximizingPlayer = getWhoMovesFirst()
+
+    if currentPlayer == 'M':
+        board.resetGridM()
+    else:
+        board.resetGrid()
+    board.draw()
 
     while True:
 
@@ -162,87 +170,87 @@ def staticEvaluation(curState, staticBoard, playerType):
 
     return value
 
-# def createEvalTable(board):
-    
-#     b = copy.deepcopy(board)
-#     topoMap = copy.deepcopy(board)
-
-#     maxValue = 1000
-#     minValue = -1000
-#     lt_score = 200
-#     gt_score = 200
-
-#     for i in range(N):
-#         for j in range(N): 
-
-#             if j == (N - 1) // 2:
-#                 topoMap[i][j] = maxValue - 150
-            
-#             # center values
-#             if i == (N - 1) // 2 and j == (N - 1) // 2:
-#                 topoMap[i][j] = maxValue
-
-#             # if column is less than half
-#             if  j < (N - 1) // 2:
-#                 topoMap[i][j] = minValue + lt_score
-#                 lt_score = lt_score + 200
-
-#             # if column is greater than half
-#             if j > (N - 1) // 2:
-#                 topoMap[i][j] = maxValue - gt_score
-#                 gt_score = gt_score + 200
-
-#             if i == 0:
-#                 topoMap[i][j] = minValue
-#             elif i == N - 1:
-#                 topoMap[i][j] = minValue
-#             if j == 0:
-#                 topoMap[i][j] = minValue
-#             elif j == N - 1:
-#                 if N % 2 == 1:
-#                     topoMap[i][j] = minValue
-#                 else:
-#                     topoMap[i][j] = maxValue - 100
-    
-#     # for i in topoMap:
-#     #     print(i)
-    
-#     for i in range(N):
-#         for j in range(N):
-#             if board[i][j] == ' ':
-#                 b[i][j] = topoMap[i][j]
-#     # for i in b:
-#     #     print(i)
-                
-#     return b
-
 def createEvalTable(board):
     
     b = copy.deepcopy(board)
+    topoMap = copy.deepcopy(board)
+
     maxValue = 1000
     minValue = -1000
-    count = 0
+    lt_score = 200
+    gt_score = 200
 
+    for i in range(N):
+        for j in range(N): 
+
+            if j == (N - 1) // 2:
+                topoMap[i][j] = maxValue - 150
+            
+            # center values
+            if i == (N - 1) // 2 and j == (N - 1) // 2:
+                topoMap[i][j] = maxValue
+
+            # if column is less than half
+            if  j < (N - 1) // 2:
+                topoMap[i][j] = minValue + lt_score
+                lt_score = lt_score + 200
+
+            # if column is greater than half
+            if j > (N - 1) // 2:
+                topoMap[i][j] = maxValue - gt_score
+                gt_score = gt_score + 200
+
+            if i == 0:
+                topoMap[i][j] = minValue
+            elif i == N - 1:
+                topoMap[i][j] = minValue
+            if j == 0:
+                topoMap[i][j] = minValue
+            elif j == N - 1:
+                if N % 2 == 1:
+                    topoMap[i][j] = minValue
+                else:
+                    topoMap[i][j] = maxValue - 100
+    
+    # for i in topoMap:
+    #     print(i)
     
     for i in range(N):
         for j in range(N):
             if board[i][j] == ' ':
-
-                b[i][j] = 500
-
-                if i == 0:
-                    b[i][j] = minValue
-                elif i == N - 1:
-                    b[i][j] = minValue
-                if j == 0:
-                    b[i][j] = minValue
-                elif j == N - 1:
-                    b[i][j] = minValue               
-                # if the board is in the middle
-                if i == (N - 1) // 2 and j == (N - 1) // 2:
-                    b[i][j] = maxValue
-
+                b[i][j] = topoMap[i][j]
+    # for i in b:
+    #     print(i)
+                
     return b
+
+# def createEvalTable(board):
+    
+#     b = copy.deepcopy(board)
+#     maxValue = 1000
+#     minValue = -1000
+#     count = 0
+
+    
+#     for i in range(N):
+#         for j in range(N):
+#             if board[i][j] == ' ':
+
+#                 b[i][j] = 500
+
+#                 if i == 0:
+#                     b[i][j] = minValue
+#                 elif i == N - 1:
+#                     b[i][j] = minValue
+#                 if j == 0:
+#                     b[i][j] = minValue
+#                 elif j == N - 1:
+#                     b[i][j] = minValue               
+#                 # if the board is in the middle
+#                 if i == (N - 1) // 2 and j == (N - 1) // 2:
+#                     b[i][j] = maxValue
+
+#     return b
 
 
 if __name__ == "__main__":
