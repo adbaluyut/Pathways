@@ -17,16 +17,10 @@ def main():
     board = Node(N=N)
     board.resetGrid()
 
-    # test = createEvalTable(board.state)
-    # for i in test:
-    #     print(i)
-
     playGame(board)
 
 
 def playGame(board):
-    
-    # board.draw()
 
     while True:
         depth = input('\nEnter the look-ahead level:\n')
@@ -37,10 +31,6 @@ def playGame(board):
    
     currentPlayer, maximizingPlayer = getWhoMovesFirst()
 
-    if currentPlayer == 'M':
-        board.resetGridM()
-    else:
-        board.resetGrid()
     board.draw()
 
     while True:
@@ -255,3 +245,4 @@ def createEvalTable(board):
 
 if __name__ == "__main__":
     main()
+    
