@@ -134,8 +134,7 @@ class Node:
             if arr[i][self.N - 1] == playerType:
                 end.append((i, self.N - 1))
 
-        # set arr[0][0] = 1 
-        arr[0][0] = 1
+       
     
         # Mark reachable (from top left)  
         # nodes in first row and first column.  
@@ -149,9 +148,9 @@ class Node:
                 
         # Mark reachable nodes in  
         # remaining matrix.  
-        for i in range(1, self.N): 
-            for j in range(1, self.N): 
-                if (arr[i][j] != -1): 
+        for i in range(1, self.N):
+            for j in range(1, self.N):
+                if (arr[i][j] != -1):
                     arr[i][j] = max(self.state[i][j - 1],  
                                     arr[i - 1][j]) 
                                     

@@ -5,8 +5,8 @@ import random
 from datetime import date, datetime
 
 
-N = 5
-# N = int(input("Enter the size of the game board:\n"))
+# N = 5
+N = int(input("Enter the size(N) of the game board (N x N):\n"))
 
 
 def main():
@@ -14,6 +14,10 @@ def main():
     # our board is initially on a maximizing layer
     board = Node(N=N)
     board.resetGrid()
+
+    # test = createEvalTable(board.state)
+    # for i in test:
+    #     print(i)
 
     playGame(board)
 
@@ -39,12 +43,15 @@ def playGame(board):
         else:
 
             print("Computer making it's move")
-            board = generateComputerPlayerMove(board, depth, -1000, +1000, maximizingPlayer, 'M')[0]
+            temp = generateComputerPlayerMove(board, board, depth, -1000, +1000, maximizingPlayer, 'M')[0]
+            if temp is not None:
+                board = temp
 
             # print("printing the returned board")
             # board.draw()
             # print("________________________")
             # this returns the state to the next move we can make
+            
             if board.parent is not None:
                 while board.parent.parent:
                     # print(board.parent)
@@ -67,8 +74,8 @@ def getWhoMovesFirst():
     maximizing = True
     first = input("Who moves first? (h/m)").upper()
 
-    if first == 'H':
-        maximizing = False
+    # if first == 'H':
+    #     maximizing = True
     
     return first, maximizing
 
@@ -87,7 +94,7 @@ def getHumanPlayerMove(board):
             print('\nInvalid move, please try new coordinates.')
 
 
-def generateComputerPlayerMove(board, depth, alpha, beta, maximizingPlayer, playerType):
+def generateComputerPlayerMove(board, staticBoard, depth, alpha, beta, maximizingPlayer, playerType):
 
     curState = copy.deepcopy(board)
     state = None
@@ -98,14 +105,17 @@ def generateComputerPlayerMove(board, depth, alpha, beta, maximizingPlayer, play
     #     s.draw()
 
     if (depth == 0 or curState.checkForAWin('M')[0] or len(children) == 0):
-        return curState, staticEvaluation(curState, playerType)
+        # print(f"cur: {curState}")
+        if curState is None:
+            return
+        return curState, staticEvaluation(curState, staticBoard, playerType)
 
     if maximizingPlayer:
         maxEvaluation = -1000
         
         # curState is the generated States
         for child in children:
-            newState, evaluation = generateComputerPlayerMove(child, depth -1, alpha, beta, False, opponent)
+            newState, evaluation = generateComputerPlayerMove(child, staticBoard, depth -1, alpha, beta, False, opponent)
             if evaluation > maxEvaluation:
                 state = newState
             maxEvaluation = max(maxEvaluation, evaluation)
@@ -119,7 +129,7 @@ def generateComputerPlayerMove(board, depth, alpha, beta, maximizingPlayer, play
     else:
         minEvaluation = 1000
         for child in children:
-            newState, evaluation = generateComputerPlayerMove(child, depth - 1, alpha, beta, True, opponent)
+            newState, evaluation = generateComputerPlayerMove(child, staticBoard, depth - 1, alpha, beta, True, opponent)
             if evaluation < minEvaluation:
                 state = newState
             minEvaluation = min(minEvaluation, evaluation)
@@ -131,82 +141,25 @@ def generateComputerPlayerMove(board, depth, alpha, beta, maximizingPlayer, play
         return state, minEvaluation
     
 
-def staticEvaluation(curState, playerType): #curState is a node and this assigns a value to it
+def staticEvaluation(curState, staticBoard, playerType): #curState is a node and this assigns a value to it
+    
     value = 0
+    table = createEvalTable(staticBoard.state)
     isWin = curState.checkForAWin(playerType)
     opponentWin = curState.checkForAWin('H' if playerType == 'M' else 'M')
 
-    #Find all possible winning paths from the current state.
+    # can have a for loop here and compare curState.State[i][j] and table[i][j]
+    # for i in table:
+    #     print(i)
 
-    #mini_lists = [x,y,0]
-    ex_1 = [1,4,0]
-    ex_2 = [3,7,0]
-    ex_3 = [2,1,0]
-    ex_4 = [3,8,0]
-
-    #possiblepath
-    path1 = [ex_1,ex_2,ex_3,ex_4]
-
-    #mini_lists = [x,y,0]
-    ex_1 = [1,4,0]
-    ex_2 = [8,1,0]
-    ex_3 = [2,1,0]
-    ex_4 = [6,6,0]
-
-    #possiblepath
-    path2 = [ex_1,ex_2,ex_3,ex_4]
-
-    #mini_lists = [x,y,0]
-    ex_1 = [1,4,0]
-    ex_2 = [7,7,0]
-    ex_3 = [8,2,0]
-    ex_4 = [2,6,0]
-
-    #possiblepath
-    path3 = [ex_1,ex_2,ex_3,ex_4]
-
-    possiblePaths =[path1, path2, path3]
-
-    #---------> make the vertices have a 3rd blank index
-
-
-    #Log all vertices that are in a winning path
-
-    verticesInPaths = []
-
-    for path in possiblePaths:
-        for vertex in path:
-            if curState.state[vertex[0]][vertex[1]] != 'M':
-                verticesInPaths.append(vertex)
-
-    #Count the number of winning paths that go through each vertex.
-
-    for vertex in verticesInPaths:
-        vertex[2] = verticesInPaths.count(vertex)
-
-    #Sort the selected vertices list based on how many paths they're in.
-
-    sorted(verticesInPaths, key = lambda x: x[2])
-    winningVertex = verticesInPaths[0]
-
-    #(Can range from once up to the number of possible winning paths found.)
-
-    #All vertices on the grid that are in the above group, means that they are not 
-    #in the path of a winning option, and are given a low value. (Or none?)
-    #Maybe doesn't even matter since the other ones will be chosen anyways.
-
-    #Select the vertex with the highest number.
-    print('Based on this method alone, the next best move is the vertex ({:d},{:d}) as it is a vertex in {:d} possible winning paths.'.format(winningVertex[0], winningVertex[1], winningVertex[2]))
-
-    
-    
-    
-    
-    
-    
-    return value
-    
-    #-------------------
+    for i in range(N):
+        for j in range(N):
+            if curState.state[i][j] != staticBoard.state[i][j]:
+                # print(f"\n{i}{j}")
+                # print(f"cur: {curState.state[i][j]}")                
+                # print(f"static: {staticBoard.state[i][j]}")
+                # print(f"table: {table[i][j]}")
+                value += table[i][j]
     
     # if this is a winning state give it a high value
     if isWin[0]:
@@ -230,6 +183,90 @@ def staticEvaluation(curState, playerType): #curState is a node and this assigns
     # if all up, down, left, right is other player or out of bounds
 
     return value
+
+# def createEvalTable(board):
+    
+#     b = copy.deepcopy(board)
+#     topoMap = copy.deepcopy(board)
+
+#     maxValue = 10000
+#     minValue = -10000
+#     lt_score = 200
+#     gt_score = 200
+
+#     for i in range(N):
+#         for j in range(N):
+            
+#             if i == 0:
+#                 b[i][j] = minValue
+#             elif i == N - 1:
+#                 b[i][j] = minValue
+#             if j == 0:
+#                 b[i][j] = minValue
+#             elif j == N - 1:
+#                 b[i][j] = minValue      
+
+#             if j == (N - 1) // 2:
+#                 topoMap[i][j] = maxValue - 100
+            
+#             if i == (N - 1) // 2 and j == (N - 1) // 2:
+#                 topoMap[i][j] = maxValue
+
+#             if  j < (N - 1) // 2:
+#                 topoMap[i][j] = minValue + lt_score
+#                 lt_score = lt_score + 200
+
+#             if j > (N - 1) // 2:
+#                 topoMap[i][j] = maxValue - gt_score
+#                 gt_score = gt_score + 200
+    
+#     # for i in topoMap:
+#     #     print(i)
+    
+#     for i in range(N):
+#         for j in range(N):
+#             if board[i][j] == ' ':
+
+#                 b[i][j] = topoMap[i][j]
+#     # for i in b:
+#     #     print(i)
+                
+#     return b
+
+def createEvalTable(board):
+    
+    b = copy.deepcopy(board)
+    maxValue = 1000
+    minValue = -1000
+    count = 0
+
+    
+    for i in range(N):
+        for j in range(N):
+            if board[i][j] == ' ':
+
+                b[i][j] = 500
+
+                if i == 0:
+                    b[i][j] = minValue
+                elif i == N - 1:
+                    b[i][j] = minValue
+                if j == 0:
+                    b[i][j] = minValue
+                elif j == N - 1:
+                    b[i][j] = minValue               
+                # if the board is in the middle
+                if i == (N - 1) // 2 and j == (N - 1) // 2:
+                    b[i][j] = maxValue
+
+                # if (j < (N - 1) // 2) and (j > 0):
+                #     b[i][j] = b[i][j+2] - 100
+                # else:
+                #     b[i][j] = b[i][j-2] - 100
+                
+                
+
+    return b
 
 
 if __name__ == "__main__":
